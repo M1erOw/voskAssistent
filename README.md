@@ -2,11 +2,16 @@
 Скрипт для распознавания голосовых команд на русском языке с использованием [Vosk](https://alphacephei.com/vosk/) и выполнением действий после произнесения триггерного слова.
 
 ### Зависимости
-Необходимые библиотеки:
 ```[bash]
-pip install vosk sounddevice pyautogui pillow
+pip install -r requirements.txt
 ```
-Также потребуется модель Vosk [vosk-model-small-ru-0.22](https://alphacephei.com/vosk/models/vosk-model-small-ru-0.22.zip)
+При первом запуске будет установлена модель [vosk-model-small-ru-0.22](https://alphacephei.com/vosk/models/vosk-model-small-ru-0.22.zip)
+
+В случае ошибки `OSError: PortAudio library not found`:
+```[bash]
+sudo apt install libportaudio2
+```
+**Примечание**: код тестировался на Python==3.13.3 и 3.12.3
 
 ### Запуск
 
@@ -31,7 +36,7 @@ python triggerNew.py
 |`создай файл <имя>`|Создает пустой файл `имя.txt`|
 |`открой браузер`|Открывает новое окно с Google в браузере по умолчанию|
 |`напиши <текст>`|Выводит текст в консоль|
-|`найди <запрос>`|Посик в Google|
+|`найди <запрос>`|Поиск в Google|
 
 ### Как работает
 1. Скрипт постоянно слушает микрофон

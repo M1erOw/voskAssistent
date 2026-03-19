@@ -12,7 +12,6 @@ import webbrowser
 from vosk import Model, KaldiRecognizer, SetLogLevel
 
 q = queue.Queue()
-SetLogLevel(-1)
 
 def int_or_str(text):
     """Helper function for argument parsing."""
@@ -108,7 +107,7 @@ def processCommand(words):
             print("Неизвестная команда")
 
 if __name__ == '__main__':
-
+    SetLogLevel(-1)
     parser = argparse.ArgumentParser(add_help=False)
     parser.add_argument(
         "-l", "--list-devices", action="store_true",
