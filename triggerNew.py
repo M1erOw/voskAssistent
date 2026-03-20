@@ -129,9 +129,6 @@ if __name__ == '__main__':
     parser.add_argument(
         "-t", "--trigger", type=str, default="мормышка",
         help="trigger word or phrase to activate (default: 'мормышка')")
-    # parser.add_argument(
-    #     "-et", "--endTrig", type=str, default=None,
-    #     help="trigger word or phrase to do task (by default use 5 seconds timer)")
     args = parser.parse_args(remaining)
 
     try:
@@ -146,8 +143,6 @@ if __name__ == '__main__':
             print("#" * 80)
             print("Press Ctrl+C to stop the recording")
             print(f"Trigger word: '{args.trigger}'")
-            # if args.endTrig is not None:
-            #     print(f"End trigger word: '{args.endTrig}'")
             print("#" * 80)
 
             rec = KaldiRecognizer(model, args.samplerate)
@@ -168,17 +163,7 @@ if __name__ == '__main__':
                     text = result.get('text','')
                     words = result.get('result',[])
                     if not words: # случай тишины(каждые ~5 секунд тишины rec.Result() возвращает пустую строку)
-                        print("тишь да гладь")
-                        #################
-                        # if listening:
-                        #     # По идее сюда никогда не попадем Значит можно убрать
-                        #     command = " ".join(command_words)
-                        #     print("Команда 1: ",command)
-                        #     processCommand(command_words)
-                        #     listening = False
-                        #     command_words = []
-                        #     last_word_time = None
-                        #################    
+                        # print("тишь да гладь")    
                         continue
                     i = 0
                     while i < len(words):
@@ -194,18 +179,6 @@ if __name__ == '__main__':
                             i += 1
                             continue
 
-                        # if (args.end_trigger and word == args.end_trigger):
-                        #     command = " ".join(command_words)
-                        #     print("Команда :", command)
-                        #     processCommand(command)
-                        #     listening = False
-                        #     command_words = []
-                        #     last_word_time = None
-                        #     i += 1
-                        #     continue
-
-                        # if not args.end_trigger and last_word_time:
-                        # if last_word_time:
                         if start - last_word_time > silence:
                             command = " ".join(command_words)
                             print("Команда 2:", command)
