@@ -80,7 +80,9 @@ if __name__ == '__main__':
                                     min_dist = dist
                                     speaker_sig = sig
                             if min_dist < 0.6: # побробовать разный порог
-                                print(f"Говорит спикер №{counter} cosine_dist = {min_dist}")
+                                print(f"Говорит спикер №{signatures[speaker_sig]}, cosine_dist = {min_dist:.6f}")
+                                signatures[result["spk"]] = signatures[speaker_sig] # или удаление старой записи 
+                                                                                    # и создание новой с усредненной сигнатурой
                             else:
                                 signatures[result["spk"]] = counter
                                 counter += 1
