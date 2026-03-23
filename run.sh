@@ -1,11 +1,11 @@
 #!/bin/bash
 
-if [! -d "venv"]; then
+if [ ! -d "venv" ]; then
     python3 -m venv venv
 fi
 
 source venv/bin/activate
 
-pip install -r requirements.txt
+pip install -r requirements.txt -q
 
 python main.py

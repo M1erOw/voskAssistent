@@ -6,8 +6,8 @@ IF NOT EXIST venv (
 
 call venv/Scripts/activate
 
-pip install -r requirements.txt
+pip install -r requirements.txt -q
 
-python main.py
+python main.py & CALL CALL
 
 exit /b
