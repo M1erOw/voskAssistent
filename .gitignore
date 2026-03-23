@@ -1,0 +1,4 @@
+testAudio/
+testScripts/
+.venv/
+__pycache__
