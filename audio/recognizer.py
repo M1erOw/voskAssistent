@@ -1,8 +1,8 @@
 import json
 from vosk import KaldiRecognizer, Model
 class Recognizer:
-    def __init__(self,samlerate,model_name):
-        self.model = Model(model_name = model_name)
+    def __init__(self,samlerate,model_path):
+        self.model = Model(model_path)
         self.rec = KaldiRecognizer(self.model,samlerate)
         self.rec.SetWords(True)
         self.rec.SetPartialWords(True)
