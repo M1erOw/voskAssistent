@@ -59,7 +59,8 @@ if __name__ == '__main__':
             rec = KaldiRecognizer(model, samplerate)
             rec.SetSpkModel(spk_model)
 
-            signatures = {}
+            signatures = []
+            sig_map = {}
             counter = 0
 
             while True:
@@ -74,17 +75,22 @@ if __name__ == '__main__':
                         if result["spk_frames"] > 100:
                             min_dist = 2.0
                             speaker_sig = None
+                            ind = 0
+                            i = 0
                             for sig in signatures:
                                 dist = cosine_dist(result["spk"],sig)
                                 if dist < min_dist:
                                     min_dist = dist
                                     speaker_sig = sig
+                                    ind = i
+                                i += 1
                             if min_dist < 0.6: # побробовать разный порог
-                                print(f"Говорит спикер №{signatures[speaker_sig]}, cosine_dist = {min_dist:.6f}")
-                                signatures[result["spk"]] = signatures[speaker_sig] # или удаление старой записи 
-                                                                                    # и создание новой с усредненной сигнатурой
+                                print(f"Говорит спикер №{sig_map[ind]}, cosine_dist = {min_dist:.6f}")
+                                signatures.append(result["spk"])                # или удаление старой записи
+                                sig_map[len(signatures) - 1] = sig_map[ind]     # и создание новой с усредненной сигнатурой
                             else:
-                                signatures[result["spk"]] = counter
+                                signatures.append(result["spk"])
+                                sig_map[len(signatures) - 1] = counter
                                 counter += 1
                                 print("Добавлен новый спикер")
                         else:

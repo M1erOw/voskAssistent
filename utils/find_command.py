@@ -4,7 +4,6 @@ def find_command(words):
     actions = { "сверни все окна" : 3, "запиши в файл" : 3,
                 "сделай скриншот" : 2, "создай файл" : 2, "открой браузер" : 2, "найди документ" : 2, "создай напоминание" : 2,
                 "напиши" : 1, "найди" : 1}
-    actions.values
     res = [sorted(actions.keys(),key= lambda x: checkSimilar(" ".join(words[:actions[x]]),x))]
     if res[0] > 0.8:
         return res[0],words[actions[res[0]]:]
