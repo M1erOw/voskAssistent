@@ -6,7 +6,7 @@ from audio.audio_stream import create_stream, q
 from audio.recognizer import Recognizer
 from commands.commands import *
 from state.state import ListeningState
-from utils import find_command
+from utils.find_command import find_command
 
 commands = {"сверни все окна" : MinimizeAllWindows(),
             "запиши в файл" : WriteToFile(),
@@ -48,6 +48,7 @@ def main():
                 data = q.get()              
                 if recognizer.accept(data):
                     result = recognizer.get_result()
+                    print(result.get('text',''))
                     words = result.get('result',[])
                     if not words:
                         continue
@@ -57,15 +58,17 @@ def main():
                         end = w['end']
                         if not state.listening:
                             if word == trigger:
-                                state.set_state(True,[],end)
-                            i += 1
+                                state.listening = True
+                                state.words = []
+                                state.last_word_time = end
                             continue
                         if start - state.last_word_time > silence:
                             process_command(state.words)
                             state = ListeningState()
                             continue
-                        state.set_state(word,end)
-                    state.set_state(time.perf_counter())
+                        state.words.append(word)
+                        state.last_word_time = end
+                    state.last_result_time = time.perf_counter()
                 else:
                     if state.listening:
                         partial = recognizer.get_partial()
