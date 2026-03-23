@@ -1,31 +1,37 @@
 # Vosk Assistant
+
 Скрипт для распознавания голосовых команд на русском языке с использованием [Vosk](https://alphacephei.com/vosk/) и выполнением действий после произнесения триггерного слова.
 
 ### Зависимости
+
 ```[bash]
-pip install -r requirements.txt
+vosk sounddevice pyautogui pillow
 ```
 При первом запуске будет установлена модель [vosk-model-small-ru-0.22](https://alphacephei.com/vosk/models/vosk-model-small-ru-0.22.zip)
 
 В случае ошибки `OSError: PortAudio library not found`:
+
 ```[bash]
 sudo apt install libportaudio2
 ```
 **Примечание**: код тестировался на Python==3.13.3 и 3.12.3
 
-### Запуск
+### Установка и запуск
+
+Скачайте или клонируйте репозиторий
 
 ```[bash]
-python triggerNew.py
+git clone https://github.com/M1erOw/voskAssistent.git
 ```
-#### Дополнительные парметры
 
-|Параметр|Описание|
-|--------|--------|
-|`-l`,`--list-devices`|Показать список доступных аудиоустройств и завершиться|
-|`-d`,`--device`|Указать устройство ввода|
-|`-r`,`--samplerate`|Частота дискретизации записываемого аудио|
-|`-t`,`--trigger`|Слово-триггер|
+* #### Для Linux:
+
+    - Cделайте скрипт исполняемым `chmod +x run.sh`
+
+    - `./run.sh`
+* #### Для Windows:
+
+    - `run.bat`
 
 ### Поддерживаемые команды
 
