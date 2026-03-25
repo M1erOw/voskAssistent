@@ -1,4 +1,7 @@
+from multiprocessing import Pipe
+import sys
 import time
+from PyQt5.QtWidgets import QApplication
 from vosk import SetLogLevel
 import sounddevice as sd
 
@@ -8,6 +11,7 @@ from commands.commands import *
 from config import *
 from state.state import ListeningState
 from utils.find_command import find_command
+from window.window import MyWindow
 
 commands = {"сверни все окна" : MinimizeAllWindows(),
             "запиши в файл" : WriteToFile(),
@@ -19,13 +23,21 @@ commands = {"сверни все окна" : MinimizeAllWindows(),
             "напиши" : WriteToConsole(),
             "найди" : FindInBrowser()}
 
-def process_command(words):
+def process_command(words, execute = True):
     name, args = find_command(words)
     if name in commands:
-        commands[name].execute(args)
+        if execute:
+            commands[name].execute(args)
+        else:
+            return name
     else:
-        print("Неизвестная команда")
-    
+        return None
+
+def start_qt(conn):
+    app = QApplication(sys.argv)
+    window = MyWindow(conn)
+    app.exec()
+
 def main():
     SetLogLevel(-1)
     device_info = sd.query_devices(DEVICE, "input")
@@ -33,6 +45,10 @@ def main():
 
     recognizer = Recognizer(samplerate,MODEL_PATH)
     state = ListeningState()
+
+    parent_conn, child_conn = Pipe()
+    proc = Process(target=start_qt, args=(child_conn,)) 
+    proc.start()
 
     try:
         with create_stream(samplerate,DEVICE):
@@ -62,14 +78,18 @@ def main():
                             continue
                         if start - state.last_word_time > SILENCE:
                             process_command(state.words)
+                            msg = {'show': False,'text':" ".join(state.words)}
+                            parent_conn.send(msg)
                             state = ListeningState()
                             continue
                         state.words.append(word)
                         state.last_word_time = end
                     state.last_result_time = time.perf_counter()
                 else:
+                    partial = recognizer.get_partial()
+                    pText = partial.get('partial','')
                     if state.listening:
-                        partial = recognizer.get_partial()
+                        msg = {'add_text':pText}
                         pWords = partial.get('partial_result',[])
                         start = 0.0
                         if pWords:
@@ -80,10 +100,23 @@ def main():
                             end = state.last_result_time
                         if start - end > SILENCE:
                             process_command(state.words)
+                            msg['show'] = False
+                            msg['text'] = " ".join(state.words)
                             state = ListeningState()
+                        parent_conn.send(msg)
+                    elif TRIGGER in pText:
+                        text = pText[pText.find(TRIGGER) + len(TRIGGER):]
+                        words = text.split()
+                        name = process_command(words,execute = False)
+                        msg = {'text' : text}
+                        if name:
+                            msg['command'] = name
+                        parent_conn.send(msg)
                             
     except KeyboardInterrupt:
         print("\nDone")
+        # proc.terminate()
+        # parent_conn.send({'terminate':True})
     except Exception as e:
         print(type(e).__name__ + ": " + str(e))
 
