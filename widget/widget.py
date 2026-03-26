@@ -61,7 +61,10 @@ class MyWindow(QMainWindow):
                     else:
                         self.lab_text.setText(self.lab_text.text() + "❌")
                         self.activateWindow()
-                        QTimer.singleShot(2000, self.hide_window)
+                        if not msg['second_try']:
+                            QTimer.singleShot(500, lambda: self.lab_text.setText("Попробуйте еще раз"))
+                        else:
+                            QTimer.singleShot(2000, self.hide_window)
                 if 'close' in msg:
                     QTimer.singleShot(5000, self.close)
             if self.lab_text.text()[0] == "С":

@@ -91,8 +91,13 @@ def main():
                             if name:
                                 parent_conn.send({'text':command,'command': True,'name': name,'args': arg})
                             else:
-                                parent_conn.send({'text':command,'command': False})
-                            state = ListeningState()
+                                parent_conn.send({'text':command,'command': False,'second_try':state.second_try})
+                            if state.second_try:
+                                state = ListeningState()
+                            else:
+                                state = ListeningState()
+                                state.listening = True
+                                state.second_try = True
                         elif pText:
                             parent_conn.send({'add_text':pText})
                     elif TRIGGER in pText:
