@@ -10,28 +10,8 @@ from audio.recognizer import Recognizer
 from commands.commands import *
 from config import *
 from state.state import ListeningState
-from utils.find_command import find_command
-from window.window import MyWindow
-
-commands = {"сверни все окна" : MinimizeAllWindows(),
-            "запиши в файл" : WriteToFile(),
-            "сделай скриншот" : TakeScreenshot(),
-            "создай файл" : CreateFile(),
-            "открой браузер" : OpenBroser(),
-            "найди документ" : FindDocument(),
-            "создай напоминание" : CreateReminder(),
-            "напиши" : WriteToConsole(),
-            "найди" : FindInBrowser()}
-
-def process_command(words, execute = True):
-    name, args = find_command(words)
-    if name in commands:
-        if execute:
-            commands[name].execute(args)
-        else:
-            return name
-    else:
-        return None
+from utils.commands import find_command
+from widget.widget import MyWindow
 
 def start_qt(conn):
     app = QApplication(sys.argv)
@@ -72,14 +52,22 @@ def main():
                         end = w['end']
                         if not state.listening:
                             if word == TRIGGER:
+                                msg = {'show': True}
+                                parent_conn.send(msg)
                                 state.listening = True
                                 state.words = []
                                 state.last_word_time = end
+                                if not state.send_show:
+                                    parent_conn.send({'show': True})
+                                    state.send_show = True
                             continue
                         if start - state.last_word_time > SILENCE:
-                            process_command(state.words)
-                            msg = {'show': False,'text':" ".join(state.words)}
-                            parent_conn.send(msg)
+                            name, arg = find_command(state.words)
+                            command = " ".join(state.words)
+                            if name:
+                                parent_conn.send({'text':command,'command': True,'name': name,'args': arg})
+                            else:
+                                parent_conn.send({'text':command,'command': False})
                             state = ListeningState()
                             continue
                         state.words.append(word)
@@ -88,9 +76,8 @@ def main():
                 else:
                     partial = recognizer.get_partial()
                     pText = partial.get('partial','')
-                    if state.listening:
-                        msg = {'add_text':pText}
-                        pWords = partial.get('partial_result',[])
+                    pWords = partial.get('partial_result',[])
+                    if state.listening:                    
                         start = 0.0
                         if pWords:
                             start = pWords[0]['start']
@@ -98,25 +85,26 @@ def main():
                         else:
                             start = time.perf_counter()
                             end = state.last_result_time
-                        if start - end > SILENCE:
-                            process_command(state.words)
-                            msg['show'] = False
-                            msg['text'] = " ".join(state.words)
+                        if start - end > SILENCE + (0.0 if state.words else 3.0):
+                            name, arg = find_command(state.words)
+                            command = " ".join(state.words)
+                            if name:
+                                parent_conn.send({'text':command,'command': True,'name': name,'args': arg})
+                            else:
+                                parent_conn.send({'text':command,'command': False})
                             state = ListeningState()
-                        parent_conn.send(msg)
+                        elif pText:
+                            parent_conn.send({'add_text':pText})
                     elif TRIGGER in pText:
-                        text = pText[pText.find(TRIGGER) + len(TRIGGER):]
-                        words = text.split()
-                        name = process_command(words,execute = False)
-                        msg = {'text' : text}
-                        if name:
-                            msg['command'] = name
-                        parent_conn.send(msg)
+                        if not state.send_show:   
+                            parent_conn.send({'show': True})
+                            state.send_show = True
+                        text = pText[pText.find(TRIGGER) + len(TRIGGER) + 1:]
+                        if text:
+                            parent_conn.send({'add_text' : text})
                             
     except KeyboardInterrupt:
         print("\nDone")
-        # proc.terminate()
-        # parent_conn.send({'terminate':True})
     except Exception as e:
         print(type(e).__name__ + ": " + str(e))
 

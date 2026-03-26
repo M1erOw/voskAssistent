@@ -1,3 +1,4 @@
+from commands.commands import *
 from utils.similarity import checkSimilar
 
 def find_command(words):    
@@ -26,3 +27,19 @@ def find_command(words):
         return best_match, words[actions[best_match]:]
 
     return None, []
+
+commands = {"сверни все окна" : MinimizeAllWindows(),
+            "запиши в файл" : WriteToFile(),
+            "сделай скриншот" : TakeScreenshot(),
+            "создай файл" : CreateFile(),
+            "открой браузер" : OpenBroser(),
+            "найди документ" : FindDocument(),
+            "создай напоминание" : CreateReminder(),
+            "напиши" : WriteToConsole(),
+            "найди" : FindInBrowser()}
+
+def process_command(name, args, execute = True):
+    if execute:
+        commands[name].execute(args)
+    else:
+        return
