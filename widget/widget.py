@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QMainWindow, QLabel, QVBoxLayout, QWidget, QDesktopWidget
-from PyQt5.QtCore import QTimer
+from PyQt5.QtCore import QTimer, Qt
 
 from utils.commands import process_command
 
@@ -13,7 +13,15 @@ class MyWindow(QMainWindow):
         self.counter = 0
         self.saved_text = ''
         self.setWindowTitle("мега окно распознаватель")
-        self.setGeometry(300, 300, 500, 300)
+        
+        rect = QDesktopWidget().availableGeometry() 
+
+        w,h = rect.width() // 5,rect.height() // 5
+
+        self.resize(w,h)
+
+        self.setWindowFlags(Qt.FramelessWindowHint)
+        self.setAttribute(Qt.WA_TranslucentBackground)
 
         qr = self.frameGeometry()
         cp = QDesktopWidget().availableGeometry().center()
@@ -29,10 +37,26 @@ class MyWindow(QMainWindow):
         font.setBold(True)
         self.lab_text.setFont(font)
 
+        self.lab_text.setStyleSheet("""
+            color: white;
+            background-color: lightblue;
+            font-size: 24px;
+            font-family: Arial;
+            padding: 10px;
+            border: 2px solid darkblue;
+            border-radius: 50px;
+        """)
+
         layout.addWidget(self.lab_text)
 
         central_widget = QWidget()
         central_widget.setLayout(layout)
+        central_widget.setStyleSheet(
+            """
+            background:lightgreen;
+            border-radius: 50px;
+            """
+        )
         self.setCentralWidget(central_widget)
 
     def check_pipe(self):
