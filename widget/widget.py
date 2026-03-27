@@ -9,7 +9,7 @@ class MyWindow(QMainWindow):
         self.connection = conn
         self.timer = QTimer()
         self.timer.timeout.connect(self.check_pipe)
-        self.timer.start(50)
+        self.timer.start(20)
         self.counter = 0
         self.saved_text = ''
         self.setWindowTitle("мега окно распознаватель")
@@ -61,7 +61,7 @@ class MyWindow(QMainWindow):
                     else:
                         self.lab_text.setText(self.lab_text.text() + "❌")
                         self.activateWindow()
-                        if not msg['second_try']:
+                        if not msg['second_try'] and msg['text']:
                             QTimer.singleShot(500, lambda: self.lab_text.setText("Попробуйте еще раз"))
                         else:
                             QTimer.singleShot(2000, self.hide_window)

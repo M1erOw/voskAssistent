@@ -30,6 +30,8 @@ def main():
     proc = Process(target=start_qt, args=(child_conn,)) 
     proc.start()
 
+    blank_counter = 0
+
     try:
         with create_stream(samplerate,DEVICE):
             print("#" * 80)
@@ -42,63 +44,54 @@ def main():
                     result = recognizer.get_result()
                     text = result.get('text','') 
                     if text:
-                        print(text)
-                    words = result.get('result',[])
+                        print("Res:",text)
+                    else:
+                        print("Blank Res")
+                    words = text.split()
                     if not words:
                         continue
-                    for w in words:
-                        word = w['word']
-                        start = w['start']
-                        end = w['end']
+                    for word in words:
                         if not state.listening:
                             if word == TRIGGER:
-                                msg = {'show': True}
-                                parent_conn.send(msg)
                                 state.listening = True
                                 state.words = []
-                                state.last_word_time = end
                                 if not state.send_show:
                                     parent_conn.send({'show': True})
                                     state.send_show = True
                             continue
-                        if start - state.last_word_time > SILENCE:
-                            name, arg = find_command(state.words)
-                            command = " ".join(state.words)
-                            if name:
-                                parent_conn.send({'text':command,'command': True,'name': name,'args': arg})
-                            else:
-                                parent_conn.send({'text':command,'command': False})
-                            state = ListeningState()
-                            continue
+
                         state.words.append(word)
-                        state.last_word_time = end
                     state.last_result_time = time.perf_counter()
                 else:
                     partial = recognizer.get_partial()
                     pText = partial.get('partial','')
-                    pWords = partial.get('partial_result',[])
+                    if pText:
+                        if blank_counter:
+                            print(f"{blank_counter} blank lines")
+                            blank_counter = 0
+                        print("Part:",pText)
+                    else:
+                        blank_counter += 1
+                    pWords = pText.split()
                     if state.listening:                    
-                        start = 0.0
-                        if pWords:
-                            start = pWords[0]['start']
-                            end = state.last_word_time
-                        else:
-                            start = time.perf_counter()
-                            end = state.last_result_time
+                        start = time.perf_counter()
+                        end = state.last_result_time
                         if start - end > SILENCE + (0.0 if state.words else 3.0):
                             name, arg = find_command(state.words)
                             command = " ".join(state.words)
                             if name:
                                 parent_conn.send({'text':command,'command': True,'name': name,'args': arg})
+                                state = ListeningState()
                             else:
                                 parent_conn.send({'text':command,'command': False,'second_try':state.second_try})
-                            if state.second_try:
-                                state = ListeningState()
-                            else:
-                                state = ListeningState()
-                                state.listening = True
-                                state.second_try = True
+                                if not state.second_try and state.words:
+                                    state.words = []
+                                    state.second_try = True
+                                else:
+                                    state = ListeningState()
+                            print("Команда:", command)
                         elif pText:
+                            state.last_result_time = start
                             parent_conn.send({'add_text':pText})
                     elif TRIGGER in pText:
                         if not state.send_show:   
