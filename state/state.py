@@ -7,4 +7,4 @@ class ListeningState:
         # self.last_word_time = None
         self.last_result_time = time.perf_counter()
         self.send_show = False
-        self.second_try = False
+        # self.second_try = False
