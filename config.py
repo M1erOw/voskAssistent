@@ -3,3 +3,4 @@ TRIGGER = "мормышка"
 MODEL_PATH = "vosk-model-small-ru-0.22"
 SILENCE = 2.0
 LOG_LEVEL = -1
+FILENAME = "testAudio/mic26/mic26.wav"
