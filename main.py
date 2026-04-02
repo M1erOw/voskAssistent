@@ -2,18 +2,19 @@ import signal
 import sys
 from PyQt5.QtWidgets import QApplication
 
+from audio.file_recognizer import FileRecognizerWorker
 from audio.recognizer import RecognizerWorker
-from commands.commands import *
-from config import *
 from widget.widget import MyWidget
 
 def main():
     signal.signal(signal.SIGINT, signal.SIG_DFL)
 
     app = QApplication(sys.argv)
-                        
+    app.setQuitOnLastWindowClosed(False)
+
     window = MyWidget()
     worker = RecognizerWorker()
+    # worker = FileRecognizerWorker()
     
     worker.show_signal.connect(window.show_widget)
     worker.text_signal.connect(window.set_text)

@@ -13,6 +13,7 @@ class MyWidget(QMainWindow):
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
 
+        self.setMinimumSize(300,200)
         rect = QDesktopWidget().availableGeometry() 
         w,h = rect.width() // 5,rect.height() // 5
         self.resize(w,h)
@@ -27,11 +28,11 @@ class MyWidget(QMainWindow):
 
         self.lab_text.setStyleSheet("""
             QLabel {
-                color: white;
+                color: black;
                 background: qlineargradient(
                     x1:0, y1:0, x2:1, y2:1,
-                    stop:0 #4facfe,
-                    stop:1 #00f2fe
+                    stop:0 #e0f1ff,
+                    stop:1 #ebf3fa
                 );
                 border-radius: 20px;
                 padding: 15px;
@@ -40,7 +41,7 @@ class MyWidget(QMainWindow):
 
         shadow = QGraphicsDropShadowEffect()
         shadow.setBlurRadius(25)
-        shadow.setColor(QColor(0, 0, 255, 150))
+        shadow.setColor(QColor(200, 200, 255, 150))
         shadow.setOffset(5, 5)
         self.lab_text.setGraphicsEffect(shadow)
 
@@ -69,7 +70,6 @@ class MyWidget(QMainWindow):
             self.counter += 1
 
     def show_widget(self):
-        self.lab_text.setText("Слушаю...")
         self.show()
 
     def set_text(self,text):
@@ -80,6 +80,7 @@ class MyWidget(QMainWindow):
         if success:
             self.lab_text.setText(self.lab_text.text() + " ✅")
             QTimer.singleShot(1500, self.hide)
+            QTimer.singleShot(1500, lambda: self.lab_text.setText("Слушаю..."))
             QTimer.singleShot(1600, lambda: process_command(name,args))
         else:
             self.lab_text.setText(self.lab_text.text() + " ❌")
@@ -87,3 +88,4 @@ class MyWidget(QMainWindow):
                 QTimer.singleShot(1000, lambda: self.lab_text.setText("Слушаю..."))
             else:
                 QTimer.singleShot(1500, self.hide)
+                QTimer.singleShot(1500, lambda: self.lab_text.setText("Слушаю..."))

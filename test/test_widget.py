@@ -1,3 +1,4 @@
+import signal
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QWidget, QGraphicsDropShadowEffect, QDesktopWidget
 from PyQt5.QtCore import Qt, QTimer
@@ -26,11 +27,11 @@ class MyWidget(QMainWindow):
 
         self.lab_text.setStyleSheet("""
             QLabel {
-                color: white;
+                color: black;
                 background: qlineargradient(
                     x1:0, y1:0, x2:1, y2:1,
-                    stop:0 #4facfe,
-                    stop:1 #00f2fe
+                    stop:0 #e0f1ff,
+                    stop:1 #ebf3fa
                 );
                 border-radius: 20px;
                 padding: 15px;
@@ -39,7 +40,7 @@ class MyWidget(QMainWindow):
 
         shadow = QGraphicsDropShadowEffect()
         shadow.setBlurRadius(25)
-        shadow.setColor(QColor(0, 0, 255, 150))
+        shadow.setColor(QColor(200, 200, 255, 150))
         shadow.setOffset(5, 5)
         self.lab_text.setGraphicsEffect(shadow)
 
@@ -62,6 +63,7 @@ class MyWidget(QMainWindow):
         self.center()
     
 def main():
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
     app = QApplication(sys.argv)
 
     window = MyWidget()
