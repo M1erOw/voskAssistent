@@ -4,6 +4,7 @@ from utils.similarity import checkSimilar
 def find_command(words):    
     actions = { "сверни все окна" : 3,
                 "запиши в файл" : 3,
+                "создай псевдоним" : 2,
                 "сделай скриншот" : 2,
                 "создай файл" : 2, 
                 "открой браузер" : 2, 
@@ -31,6 +32,7 @@ def find_command(words):
 commands = {"сверни все окна" : MinimizeAllWindows(),
             "запиши в файл" : WriteToFile(),
             "сделай скриншот" : TakeScreenshot(),
+            "создай псевдоним" : CreateAlias(),
             "создай файл" : CreateFile(),
             "открой браузер" : OpenBroser(),
             "найди документ" : FindDocument(),
