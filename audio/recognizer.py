@@ -69,7 +69,7 @@ class RecognizerWorker(QThread):
                                 self.show_signal.emit()
                                 idx = words.index(TRIGGER) + 1
 
-                        state.words.append(words[idx:])
+                        state.words += words[idx:]
                         state.last_result_time = time.perf_counter()
                     else:
                         partial = recognizer.get_partial()
@@ -97,22 +97,21 @@ class RecognizerWorker(QThread):
                                     self.text_signal.emit(command)
                                     self.command_signal.emit(False, "", [], (False if command else True))
                                     
-                                    if state.words:
+                                    if command:
                                         state = ListeningState()
-                                        self.listening = True
+                                        state.listening = True
                                     else:
                                         state = ListeningState()
 
-
                             elif pText:
                                 state.last_result_time = start
-                                self.text_signal.emit(" ".join(state.words) + (" " if state.words else "") + pText)
+                                self.text_signal.emit(" ".join(state.words) + ("\n" if state.words else "") + pText)
 
                         elif TRIGGER in pText:
                             self.show_signal.emit()
                             text = pText[pText.find(TRIGGER) + len(TRIGGER) + 1:]
                             if text:
-                                self.text_signal.emit(" ".join(state.words) + (" " if state.words else "") + text)
+                                self.text_signal.emit(" ".join(state.words) + ("\n" if state.words else "") + text)
 
         except Exception as e:
             print("Worker error:", e)
