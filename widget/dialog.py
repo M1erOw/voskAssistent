@@ -1,15 +1,15 @@
-from PyQt5.QtWidgets import QDialog, QLabel, QVBoxLayout, QDialogButtonBox, QLineEdit
+from PyQt5.QtWidgets import QDialog, QLabel, QVBoxLayout, QDialogButtonBox, QLineEdit, QPushButton, QFileDialog
 from PyQt5.QtCore import Qt
 
 from utils.add_to_json import add_element_to_json_list
 
 class CustomDialog(QDialog):
-    def __init__(self, parent = None):
-        super().__init__(parent)
+    def __init__(self):
+        super().__init__()
 
         self.setWindowTitle("Adding Alias")
 
-        self.setMinimumSize(250,200)
+        self.setMinimumSize(400,200)
 
         QBtn = QDialogButtonBox.Ok | QDialogButtonBox.Cancel
 
@@ -19,11 +19,14 @@ class CustomDialog(QDialog):
 
         layout = QVBoxLayout()
         message1 = QLabel("Object name:")
+        self.text1 = QLineEdit()
+        self.button = QPushButton("Select File")
+        self.button.clicked.connect(self.open_dialog)
         message2 = QLabel("Alias for object:")
         self.text2 = QLineEdit()
-        self.text1 = QLineEdit()
         layout.addWidget(message1)
         layout.addWidget(self.text1)
+        layout.addWidget(self.button)
         layout.addWidget(message2)
         layout.addWidget(self.text2)
         layout.addWidget(self.buttonBox, alignment=Qt.AlignCenter)
@@ -31,7 +34,7 @@ class CustomDialog(QDialog):
 
         self.setStyleSheet("""
             QDialog {
-                background-color: #dbcaca;
+                background-color: #e0f1ff;
             }
 
             QLabel {
@@ -41,7 +44,7 @@ class CustomDialog(QDialog):
             }
 
             QLineEdit {
-                background-color: #e0d5d5;
+                background-color: #edf7ff;
                 border: 1px solid #555;
                 border-radius: 6px;
                 padding: 6px;
@@ -50,7 +53,7 @@ class CustomDialog(QDialog):
 
             QLineEdit:focus {
                 border: 1px solid #b88c84;
-                background-color: #cfc4c4;
+                background-color: #c7e5fc;
             }
 
             QPushButton {
@@ -78,6 +81,11 @@ class CustomDialog(QDialog):
                 background-color: #9c9ea1;
             }
         """)
+
+    def open_dialog(self):
+        file_path, _ = QFileDialog.getOpenFileName(self, "Open File")
+        if file_path:
+            self.text1.setText(file_path)
 
     def myAccept(self):
         if self.text1.text() and self.text2.text():
