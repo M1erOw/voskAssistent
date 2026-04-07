@@ -5,6 +5,8 @@ import subprocess
 import time
 import webbrowser
 import pyautogui
+from pycaw.pycaw import AudioUtilities
+
 
 from commands.base import Command
 from widget.dialog import CustomDialog
@@ -99,6 +101,50 @@ class StopApp(Command):
                 name = args[0]
                 if name in data:
                     os.system("taskkill /im " + '"' + data[name].split("/")[-1] + '"')
+
+class SetVolume(Command):
+    def execute(self,args):
+        loudness = 0
+        for i, word in enumerate(args):
+            if word in mapping:
+                loudness += mapping[word]
+            else:
+                break
+        device = AudioUtilities.GetSpeakers()
+        volume = device.EndpointVolume
+        volume.SetMasterVolumeLevelScalar(loudness / 100, None)
+
+class VolumeUp(Command):
+    def execute(self,args):
+        device = AudioUtilities.GetSpeakers()
+        volume = device.EndpointVolume
+        current_volume = volume.GetMasterVolumeLevelScalar()
+        volume.SetMasterVolumeLevelScalar(min(1.0, current_volume + 0.1), None)
+        
+class VolumeDown(Command):
+    def execute(self,args):
+        device = AudioUtilities.GetSpeakers()
+        volume = device.EndpointVolume
+        current_volume = volume.GetMasterVolumeLevelScalar()
+        volume.SetMasterVolumeLevelScalar(max(0.0, current_volume - 0.1), None)
+
+class Mute(Command):
+    def execute(self,args):
+        device = AudioUtilities.GetSpeakers()
+        volume = device.EndpointVolume
+        if volume.getMute():
+            print("Already muted")
+        else:
+            volume.setMute(1,None)
+
+class Unmute(Command):
+    def execute(self,args):
+        device = AudioUtilities.GetSpeakers()
+        volume = device.EndpointVolume
+        if not volume.getMute():
+            print("Already unmuted")
+        else:
+            volume.setMute(0,None)
 
 class FindDocument(Command):
     def execute(self,args):
