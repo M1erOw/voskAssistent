@@ -1,6 +1,7 @@
 import json
 from multiprocessing import Process
 import os
+import subprocess
 import time
 import webbrowser
 import pyautogui
@@ -74,8 +75,30 @@ class CreateReminder(Command):
 
 class CreateAlias(Command):
     def execute(self,args):
-        dialog = CustomDialog(self)
+        dialog = CustomDialog()
         dialog.exec()
+
+class ShowWeather(Command):
+    def execute(self,args):
+        webbrowser.open("https://www.gismeteo.by/", new=2)
+    
+class StartApp(Command):
+    def execute(self,args):
+        if args:
+            with open('data.json','r', encoding = "utf-8") as file:
+                data = json.load(file)
+                name = args[0]
+                if name in data:
+                    subprocess.Popen([data[name]])
+
+class StopApp(Command):
+    def execute(self,args):
+        if args:
+            with open('data.json','r', encoding = "utf-8") as file:
+                data = json.load(file)
+                name = args[0]
+                if name in data:
+                    os.system("taskkill /im " + '"' + data[name].split("/")[-1] + '"')
 
 class FindDocument(Command):
     def execute(self,args):
