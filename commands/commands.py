@@ -55,7 +55,7 @@ class WriteToFile(Command):
                         with open(data[name],'w',encoding='utf-8') as f:
                             f.write(" ".join(args[1:]))
 
-mapping = {'один': 1, 'два': 2, 'три': 3, 'четыре': 4, 'пять': 5, 'шесть': 6, 'семь': 7, 'восемь': 8, 'девять': 9, 'десять': 10, 'одиннадцать': 11,
+mapping = {'ноль': 0, 'один': 1, 'два': 2, 'три': 3, 'четыре': 4, 'пять': 5, 'шесть': 6, 'семь': 7, 'восемь': 8, 'девять': 9, 'десять': 10, 'одиннадцать': 11,
                'двенадцать': 12, 'тринадцать': 13, 'четырнадцать': 14, 'пятнадцать': 15, 'шестнадцать': 16, 'семнадцать': 17, 'восемнадцать': 18, 'девятнадцать': 19,
                'двадцать': 20, 'тридцать': 30, 'сорок': 40, 'пятьдесят': 50, 'шестьдесят': 60, 'семдесят': 70, 'восемдесят': 80, 'девяносто': 90 ,'сто': 100}
 
@@ -132,20 +132,29 @@ class Mute(Command):
     def execute(self,args):
         device = AudioUtilities.GetSpeakers()
         volume = device.EndpointVolume
-        if volume.getMute():
+        if volume.GetMute():
             print("Already muted")
         else:
-            volume.setMute(1,None)
+            volume.SetMute(1,None)
 
 class Unmute(Command):
     def execute(self,args):
         device = AudioUtilities.GetSpeakers()
         volume = device.EndpointVolume
-        if not volume.getMute():
+        if not volume.GetMute():
             print("Already unmuted")
         else:
-            volume.setMute(0,None)
+            volume.SetMute(0,None)
 
-class FindDocument(Command):
+class Run(Command):
+    def execute(self,args):
+        if args:
+            with open('data.json','r', encoding = "utf-8") as file:
+                data = json.load(file)
+                name = args[0]
+                if name in data:
+                    webbrowser.open(data[name], new=2)
+
+class Info(Command):
     def execute(self,args):
         pass
