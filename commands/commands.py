@@ -10,7 +10,6 @@ from pycaw.pycaw import AudioUtilities
 
 from commands.base import Command
 from widgets.dialog import CustomDialog
-from widgets.info_widget import InfoWidget
 
 class MinimizeAllWindows(Command):
     def __init__(self):
@@ -263,14 +262,3 @@ class Run(Command):
                 name = args[0]
                 if name in data:
                     webbrowser.open(data[name], new=2)
-
-class Info(Command):
-    def __init__(self):
-        name = "справка"
-        args = "-"
-        description = "Показ окна с информацией о командах"
-        super().__init__(name, args, description)
-    
-    def execute(self,args):
-        info = InfoWidget()
-        info.show()

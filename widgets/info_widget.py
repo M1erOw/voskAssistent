@@ -1,7 +1,27 @@
 from PyQt5.QtWidgets import QWidget, QLabel, QGridLayout
 from PyQt5.QtCore import Qt
 
-from utils.commands import commands
+from commands.commands import *
+
+commands = {"сверни все окна" : MinimizeAllWindows(),
+            "запиши в файл" : WriteToFile(),
+            "сделай скриншот" : TakeScreenshot(),
+            "создай псевдоним" : CreateAlias(),
+            "создай файл" : CreateFile(),
+            "сделай громче" : VolumeUp(),
+            "сделай тише" : VolumeDown(),
+            "установи громкость" : SetVolume(),
+            "включи звук" : Unmute(),
+            "выключи звук" : Mute(),
+            "запусти приложение" : StartApp(),
+            "останови приложение" : StopApp(),
+            "покажи погоду" : ShowWeather(),
+            "открой браузер" : OpenBroser(),
+            "создай напоминание" : CreateReminder(),
+            "запусти" : Run(),
+            "напиши" : WriteToConsole(),
+            "найди" : FindInBrowser()
+}
 
 class InfoWidget(QWidget):
     def __init__(self):
@@ -34,6 +54,18 @@ class InfoWidget(QWidget):
             layout.addWidget(name, i + 1, 0)
             layout.addWidget(args, i + 1, 1)
             layout.addWidget(desc, i + 1, 2)
+
+        name = QLabel("справка")
+        args = QLabel("-")
+        desc = QLabel("Показ окна с информацией о командах")
+
+        name.setObjectName("cell")
+        args.setObjectName("cell")
+        desc.setObjectName("cell")
+
+        layout.addWidget(name, i + 1, 0)
+        layout.addWidget(args, i + 1, 1)
+        layout.addWidget(desc, i + 1, 2)
 
         self.setLayout(layout)
 

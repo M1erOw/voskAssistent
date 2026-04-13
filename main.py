@@ -2,9 +2,9 @@ import signal
 import sys
 from PyQt5.QtWidgets import QApplication
 
-from audio.file_recognizer import FileRecognizerWorker
+# from audio.file_recognizer import FileRecognizerWorker
 from audio.recognizer import RecognizerWorker
-from widget.widget import MyWidget
+from widgets.widget import MyWidget
 
 def main():
     signal.signal(signal.SIGINT, signal.SIG_DFL)

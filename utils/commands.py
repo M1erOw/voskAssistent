@@ -1,4 +1,5 @@
 from commands.commands import *
+from commands.info import Info
 from utils.similarity import checkSimilar
 
 def find_command(words):    
