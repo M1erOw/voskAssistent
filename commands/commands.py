@@ -1,4 +1,5 @@
 from datetime import datetime
+import glob
 import json
 from multiprocessing import Process
 import os
@@ -262,3 +263,21 @@ class Run(Command):
                 name = args[0]
                 if name in data:
                     webbrowser.open(data[name], new=2)
+
+class Find(Command):
+    def __init__(self):
+        name = "найди файл"
+        args = "найди файл [псевдоним]"
+        description = "Поиск файла во всех каталогах"
+        super().__init__(name, args, description)
+    
+    def execute(self,args):
+        if args:
+            with open('data.json','r', encoding = "utf-8") as file:
+                data = json.load(file)
+                name = args[0]
+                if name in data:
+                    for drive in os.listdrives():
+                        files = glob.glob(f'{drive}**\\{data[name]}', recursive=True)
+                        for file in files:
+                            print(file)
