@@ -31,7 +31,7 @@ class TakeScreenshot(Command):
 
     def execute(self,args):
         screenshot = pyautogui.screenshot()
-        screenshot.save(f"screenshot{datetime.now().strftime("%Y-%m-%d,%H:%M:%S")}.png")
+        screenshot.save(f"screenshot{datetime.now().strftime("%Y-%m-%d-%H-%M-%S")}.png")
 
 class CreateFile(Command):
     def __init__(self):

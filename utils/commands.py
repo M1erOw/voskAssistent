@@ -7,7 +7,7 @@ def find_command(words):
     best_score = 0.0
 
     for com in commands:
-        score = checkSimilar(" ".join(words[:(com.count(" ") + 1)]))
+        score = checkSimilar(" ".join(words[:(com.count(" ") + 1)]),com)
         if score > best_score:
             best_score = score
             best_match = com
