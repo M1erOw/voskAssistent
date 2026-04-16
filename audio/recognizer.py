@@ -13,8 +13,8 @@ class Recognizer:
     def __init__(self,samlerate,model_path):
         self.model = Model(model_path)
         self.rec = KaldiRecognizer(self.model,samlerate)
-        self.rec.SetWords(True)
-        self.rec.SetPartialWords(True)
+        # self.rec.SetWords(True)
+        # self.rec.SetPartialWords(True)
     
     def accept(self,data):
         return self.rec.AcceptWaveform(data)
